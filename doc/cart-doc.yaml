@@ -1,0 +1,175 @@
+openapi: 3.0.0
+info:
+  title: Cart API
+  version: '1'
+  contact:
+    name: 'Julio Shinoda'
+    email: shinoda.julio@gmail.com
+  description: "Api de serviços para o carrinho"
+servers:
+  - url: 'http://localhost:8084/cart'
+paths:
+  /cart/{id}/item:
+    post:
+      summary: Add item to a cart
+      parameters:
+        - $ref: '#/components/parameters/ID'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string      
+                price:
+                  type: integer   
+                quantity:
+                  type: integer                     
+      responses: 
+        '200':
+          description: OK
+        '400':
+          description: Bad request      
+          content:
+            application/json:    
+              schema:
+                $ref: "#/components/schemas/Error"           
+    delete:
+      summary: Delete item
+      parameters:
+        - $ref: '#/components/parameters/ID'
+      responses: 
+        '200':
+          description: OK      
+        '404':
+          description: Cart not found          
+          content:
+            application/json:    
+              schema:
+                $ref: "#/components/schemas/Error"            
+    put:
+      summary: Update item quantity 
+      parameters:
+        - $ref: '#/components/parameters/ID'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string      
+                quantity:
+                  type: integer     
+      responses: 
+        '200':
+          description: OK 
+        '404':
+          description: Cart not found          
+          content:
+            application/json:    
+              schema:
+                $ref: "#/components/schemas/Error"    
+  /cart/{id}/clean:
+    delete:
+      summary: Clean Cart
+      parameters:
+        - $ref: '#/components/parameters/ID'
+      responses: 
+        '200':
+          description: OK    
+  /cart/{id}/coupon:
+    post:
+      summary: Add coupon.
+      parameters:
+        - $ref: '#/components/parameters/ID'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                coupon-code:
+                  type: string  
+                coupon-value:
+                  type: integer
+                coupon-type:
+                  type: string  
+      responses: 
+        '200':
+          description: OK      
+  /cart/{id}:         
+    get:
+      summary: Returns Cart .
+      parameters:
+        - $ref: '#/components/parameters/ID'
+      responses: 
+        '200':
+          description: OK          
+          content:
+            application/json:    
+              schema:
+                $ref: "#/components/schemas/Cart"
+        '404':
+          description: Cart not found          
+          content:
+            application/json:    
+              schema:
+                $ref: "#/components/schemas/Error"                
+components:
+  schemas:
+    Cart:
+      type: object
+      properties:
+        id:
+          type: string
+        total:
+          type: integer
+        subtotal:
+          type: integer
+        coupon-code:
+          type: string  
+        coupon-value:
+          type: integer
+        coupon-type:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Item"
+    Item:
+      type: object
+      properties:
+        id:
+          type: string
+        price:
+          type: integer
+        quantity:
+          type: integer
+    Coupon:
+      type: object
+      properties:
+        id:
+          type: string
+        value:
+          type: integer
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+        message:
+          type: string
+  parameters:          
+    ID:
+      name: id
+      description: Cart unique identifier (uuid)
+      in: path
+      required: true
+      schema:
+        type: string
+        example: 7de1e80f-d03c-4f3c-aaf7-e5703c101b58       
