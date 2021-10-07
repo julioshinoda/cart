@@ -9,3 +9,7 @@ services:
       - ./doc:/usr/share/nginx/html/doc
    environment:
       API_URL: doc/cart-doc.yaml 
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"      
