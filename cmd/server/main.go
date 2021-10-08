@@ -43,8 +43,7 @@ func main() {
 
 func runHttpServer(lifecycle fx.Lifecycle, cartHandler *handler.CartHandler) {
 	lifecycle.Append(fx.Hook{OnStart: func(context.Context) error {
-		//TODO: use ENV VAR
-		addr := fmt.Sprintf(":%s", "8084")
+		addr := fmt.Sprintf(":%s", os.Getenv("PORT"))
 		fmt.Printf("Starting server on %v\n", addr)
 		return http.ListenAndServe(addr, router(cartHandler))
 	}})

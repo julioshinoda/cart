@@ -1,5 +1,14 @@
 version: "3.1"
 services:
+  cart-api:
+    container_name: cart
+    env_file: 
+      - .env   
+    build: ./
+    ports:
+      - '8084:${PORT}'
+    volumes:
+      - ./:/go/src/github.com/julioshinoda/cart
   swagger-ui:
    image: swaggerapi/swagger-ui
    container_name: swagger_ui_container
