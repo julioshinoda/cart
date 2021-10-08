@@ -25,11 +25,11 @@ func (s *Service) GetCart(ID string) (*entity.Cart, error) {
 //AddItem Add item to cart
 func (s *Service) AddItem(ID string, item entity.Items) (*entity.Cart, error) {
 	cart, err := s.repo.Get(ID)
+	if err != nil && !errors.Is(err, entity.ErrNotFound) {
+		return nil, err
+	}
 	if errors.Is(err, entity.ErrNotFound) {
 		cart = &entity.Cart{ID: ID}
-	}
-	if err != nil {
-		return nil, err
 	}
 	if err := cart.AddItem(item); err != nil {
 		return nil, err
