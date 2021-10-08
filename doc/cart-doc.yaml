@@ -7,7 +7,7 @@ info:
     email: shinoda.julio@gmail.com
   description: "Api de serviços para o carrinho"
 servers:
-  - url: 'http://localhost:8084/cart'
+  - url: 'http://localhost:8084'
 paths:
   /cart/{id}/item:
     post:
@@ -35,19 +35,6 @@ paths:
             application/json:    
               schema:
                 $ref: "#/components/schemas/Error"           
-    delete:
-      summary: Delete item
-      parameters:
-        - $ref: '#/components/parameters/ID'
-      responses: 
-        '200':
-          description: OK      
-        '404':
-          description: Cart not found          
-          content:
-            application/json:    
-              schema:
-                $ref: "#/components/schemas/Error"            
     put:
       summary: Update item quantity 
       parameters:
@@ -70,7 +57,22 @@ paths:
           content:
             application/json:    
               schema:
-                $ref: "#/components/schemas/Error"    
+                $ref: "#/components/schemas/Error" 
+  /cart/{id}/item/{item-id}: 
+    delete:
+      summary: Delete item
+      parameters:
+        - $ref: '#/components/parameters/ID'
+        - $ref: '#/components/parameters/itemID'
+      responses: 
+        '200':
+          description: OK      
+        '404':
+          description: Cart not found          
+          content:
+            application/json:    
+              schema:
+                $ref: "#/components/schemas/Error"            
   /cart/{id}/clean:
     delete:
       summary: Clean Cart
@@ -172,4 +174,12 @@ components:
       required: true
       schema:
         type: string
-        example: 7de1e80f-d03c-4f3c-aaf7-e5703c101b58       
+        example: 7de1e80f-d03c-4f3c-aaf7-e5703c101b58
+    itemID:
+      name: item-id
+      description: Item unique identifier (uuid)
+      in: path
+      required: true
+      schema:
+        type: string
+        example: 7de1e80f-d03c-4f3c-aaf7-e5703c101b58                 

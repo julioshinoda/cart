@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"encoding/json"
+	"errors"
 
 	"github.com/go-redis/redis/v8"
 	"github.com/julioshinoda/cart/entity"
@@ -22,17 +23,24 @@ func NewCartRedis(client *redis.Client) cart.Repository {
 	}
 }
 
-func (rc *RedisClient) Get(id string) (entity.Cart, error) {
+func (rc *RedisClient) Get(id string) (cart *entity.Cart, err error) {
 	val, err := rc.client.Get(ctx, id).Result()
+	if errors.Is(err, redis.Nil) {
+		return cart, entity.ErrNotFound
+	}
+
 	if err != nil {
-		return entity.Cart{}, err
+		return cart, err
 	}
-	var c entity.Cart
-	if err := json.Unmarshal([]byte(val), &c); err != nil {
-		return entity.Cart{}, err
+	if err := json.Unmarshal([]byte(val), &cart); err != nil {
+		return cart, err
 	}
-	return c, nil
+	return cart, nil
 }
-func (rc *RedisClient) Update(e entity.Cart) error {
-	return nil
+func (rc *RedisClient) Update(e *entity.Cart) error {
+	toSave, err := json.Marshal(e)
+	if err != nil {
+		return err
+	}
+	return rc.client.Set(ctx, e.ID, toSave, -1).Err()
 }
